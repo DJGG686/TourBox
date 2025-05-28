@@ -1,0 +1,13 @@
+__pycache__
+/note/
+/ssl/
+/venv/
+/.idea/
+/uwsgi/
+*.ssh
+*.htaccess
+*.ssh.pub
+*.ini
+*.pid
+*.txt
+!requirements.txt

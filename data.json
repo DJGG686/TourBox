@@ -1,0 +1,111 @@
+{
+  "userInfo": {
+    "token": "adjsadh",
+    "openid":"char(28)",
+    "sesskey": "char(24)",
+    "nkname": "J",
+    "avatar": "路径",
+    "gender": 1,
+    "age": 18,
+    "area": "上海市普陀区",
+    "area_code": "010101",
+    "job": "学生",
+    "school": "华东师范大学",
+    "label": "特种兵",
+    "label_code": "0",
+    "signature": "个人介绍"
+  },
+  "route":
+  {
+    "id": 1,
+    "owner": "adjsadh",
+    "title": "上海二次元之行",
+    "cover": "二进制文件",
+    "ispub": true,
+    "descp": "大家好",
+    "author": "zhangsan",
+    "forker": "adjsadh",
+    "daynum": 2,
+    "locnum": 18,
+    "likenum": 199,
+    "fork":10,
+    "lscroe": 100,
+    "rscore": 100,
+    "tscore": 100,
+    "score_num": 198,
+    "up_time": "2024-1-24",
+    "tag": 0
+  },
+  "managers": {
+    "id": 1,
+    "manager": "token",
+    "route_id": 1
+  },
+  "location_list":
+  {
+    "id": 123,
+    "route_id": 1,
+    "name": "华东师范大学",
+    "address": "上海市普陀区中山北路3663号",
+    "latitude": "纬度-90~90",
+    "longitude": "经度-180~180",
+    "day": 2,
+    "max_time": 60,
+    "min_time": 90
+  },
+  "way_list":
+  {
+    "id": 123,
+    "route_id": 1,
+    "start": "location1",
+    "end": "location2",
+    "day": 2
+  },
+  "traffic":
+  {
+    "id": 123,
+    "approach": 0,
+    "way_id": 1,
+    "time": 90,
+    "line": "地铁五号线",
+    "start_stations": "中山公园站",
+    "end_stations":"虹桥火车站"
+  },
+  "score": {
+    "id": 1,
+    "route_id": 1,
+    "author": "unionid()",
+    "up_time": "2024-1-24",
+    "l_score": 5,
+    "r_score": 5,
+    "t_score": 5
+  },
+  "lke": {
+    "id": 1,
+    "owner": "adj",
+    "route_id": 1
+  },
+  "post": {
+    "id": 1,
+    "up_time": "2024-1-24",
+    "end_time": "2024-3-22",
+    "time": "2024-3-24",
+    "title": "杭州",
+    "descp": "好好好",
+    "need": 4,
+    "number": 2,
+    "leader": "user_token",
+    "route_id": 1,
+
+    "Qcode": "https://"
+  },
+  "members": {
+    "id": 1,
+    "token": "asdasf",
+    "wechat": "adwadsfasfa",
+    "post_id": 1,
+
+    "phone": "12345678900",
+    "name": "dj"
+  }
+}

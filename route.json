@@ -1,0 +1,387 @@
+{
+    "author": "c55beb693aeaea300f7c7344b7cf7ecd",
+    "avatar": "/download/img/avatar/d0509ed66779f4075c31db7faf9b5f88171302103.jpg@120w_120h_1c_!web-comment-note.png",
+    "coordinate": {
+        "latitude": 31.2225575,
+        "longitude": 121.4113765
+    },
+    "cover": "/download/img/cover/default.jpeg",
+    "daynum": 3,
+    "descp": "好玩得一",
+    "fork": 15,
+    "forker": null,
+    "ispub": 1,
+    "likenum": 200,
+    "location": [
+        [
+            {
+                "address": "上海市黄浦区豫园",
+                "latitude": 31.227714,
+                "longitude": 121.492497,
+                "name": "豫园"
+            },
+            {
+                "address": "上海市黄浦区城隍庙",
+                "latitude": 31.223376,
+                "longitude": 121.491377,
+                "name": "城隍庙"
+            },
+            {
+                "address": "上海市黄浦区上海人民广场",
+                "latitude": 31.229381,
+                "longitude": 121.474539,
+                "name": "人民广场"
+            },
+            {
+                "address": "上海市虹口区沙泾路10号",
+                "latitude": 31.254559,
+                "longitude": 121.491884,
+                "name": "老场坊"
+            },
+            {
+                "address": "上海市虹口区甜爱路与甜爱支路交叉口南60米",
+                "latitude": 31.267649,
+                "longitude": 121.483923,
+                "name": "甜爱路"
+            },
+            {
+                "address": "上海市虹口区四川北路2288号(虹口足球场地铁站6号口步行130米)",
+                "latitude": 31.271758,
+                "longitude": 121.483531,
+                "name": "鲁迅公园"
+            },
+            {
+                "address": "上海市普陀区莫干山路50号",
+                "latitude": 31.248101,
+                "longitude": 121.449361,
+                "name": "M50创意园"
+            }
+        ],
+        [
+            {
+                "address": "上海市黄埔区南京东路558号",
+                "latitude": 31.235909,
+                "longitude": 121.479957,
+                "name": "南京路"
+            },
+            {
+                "address": "上海市浦东新区外滩",
+                "latitude": 31.238235,
+                "longitude": 121.497253,
+                "name": "外滩"
+            },
+            {
+                "address": "上海市徐汇区东方明珠",
+                "latitude": 31.173357,
+                "longitude": 121.412222,
+                "name": "东方明珠"
+            },
+            {
+                "address": "上海市浦东新区陆家嘴",
+                "latitude": 31.234295,
+                "longitude": 121.507513,
+                "name": "陆家嘴"
+            },
+            {
+                "address": "上海市浦东新区上海国金中心(东北门)",
+                "latitude": 31.237573,
+                "longitude": 121.501989,
+                "name": "国金中心"
+            },
+            {
+                "address": "上海市徐汇区武康路",
+                "latitude": 31.210383,
+                "longitude": 121.44093,
+                "name": "武康路"
+            },
+            {
+                "address": "上海市闵行区新天地",
+                "latitude": 31.193772,
+                "longitude": 121.31524,
+                "name": "新天地"
+            },
+            {
+                "address": "上海市黄浦区田子坊",
+                "latitude": 31.208332,
+                "longitude": 121.468658,
+                "name": "田子坊"
+            }
+        ]
+    ],
+    "locnum": 15,
+    "lscore": 4.9418,
+    "nkname": "J",
+    "route_id": 1,
+    "rscore": 4.5466,
+    "scale": null,
+    "scoren": 103,
+    "tag": 1,
+    "title": "上海三日游",
+    "token": "c55beb693aeaea300f7c7344b7cf7ecd",
+    "traffic": [
+        [
+            [
+                {
+                    "approach": 1,
+                    "ed": null,
+                    "line": null,
+                    "start": null,
+                    "tme": 15
+                }
+            ],
+            [
+                {
+                    "approach": 2,
+                    "ed": "东方明珠",
+                    "line": "旅游8线【申城观光2号线】",
+                    "start": "外滩金牛广场",
+                    "tme": 15
+                }
+            ],
+            [
+                {
+                    "approach": 1,
+                    "ed": null,
+                    "line": null,
+                    "start": null,
+                    "tme": 15
+                }
+            ],
+            [
+                {
+                    "approach": 1,
+                    "ed": null,
+                    "line": null,
+                    "start": null,
+                    "tme": 5
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "approach": 3,
+                    "ed": "延安西路华山路站",
+                    "line": "548路公交",
+                    "start": "华山路长乐路站",
+                    "tme": 30
+                },
+                {
+                    "approach": 1,
+                    "ed": "静安寺站",
+                    "line": null,
+                    "start": null,
+                    "tme": 30
+                },
+                {
+                    "approach": 5,
+                    "ed": "一大会址·黄陂南路站",
+                    "line": "地铁14号线",
+                    "start": "静安寺站",
+                    "tme": 30
+                }
+            ],
+            [
+                {
+                    "approach": 3,
+                    "ed": "重庆南路建国中路站",
+                    "line": "869路/933路/36路公交",
+                    "start": "重庆南路淮海中路站",
+                    "tme": 22
+                }
+            ],
+            [
+                {
+                    "approach": 3,
+                    "ed": "复兴中路光启路站",
+                    "line": "24路公交",
+                    "start": "建国中路瑞金二路站",
+                    "tme": 35
+                }
+            ],
+            [
+                {
+                    "approach": 1,
+                    "ed": null,
+                    "line": null,
+                    "start": null,
+                    "tme": 5
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "approach": 2,
+                    "ed": "曲阜路站",
+                    "line": "地铁8号线",
+                    "start": "人民广场站",
+                    "tme": 30
+                },
+                {
+                    "approach": 2,
+                    "ed": "国际客运中心站1口",
+                    "line": "转12号线",
+                    "start": null,
+                    "tme": 30
+                }
+            ],
+            [
+                {
+                    "approach": 3,
+                    "ed": "甜爱路四川北路站",
+                    "line": "854路公交",
+                    "start": "溧阳路周家嘴路站",
+                    "tme": 32
+                }
+            ],
+            [
+                {
+                    "approach": 3,
+                    "ed": "鲁迅公园路",
+                    "line": "854路或597路公交",
+                    "start": "甜爱路四川北路站",
+                    "tme": 12
+                }
+            ],
+            [
+                {
+                    "approach": 3,
+                    "ed": "曲阜路站",
+                    "line": "地铁8号线",
+                    "start": "虹口足球场站",
+                    "tme": 32
+                },
+                {
+                    "approach": 3,
+                    "ed": "汉中路站",
+                    "line": "转12号线",
+                    "start": null,
+                    "tme": 32
+                },
+                {
+                    "approach": 3,
+                    "ed": "江宁路",
+                    "line": "转13号线",
+                    "start": null,
+                    "tme": 32
+                }
+            ]
+        ]
+    ],
+    "tscore": 4.73204,
+    "uptime": "Wed, 06 Mar 2024 00:00:00 GMT",
+    "way": [
+        [
+            {
+                "address": "上海市黄埔区南京东路558号",
+                "latitude": 31.2359,
+                "longitude": 121.48,
+                "name": "南京路",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市浦东新区外滩",
+                "latitude": 31.2382,
+                "longitude": 121.497,
+                "name": "外滩",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市徐汇区东方明珠",
+                "latitude": 31.1734,
+                "longitude": 121.412,
+                "name": "东方明珠",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市浦东新区陆家嘴",
+                "latitude": 31.2343,
+                "longitude": 121.508,
+                "name": "陆家嘴",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市浦东新区上海国金中心(东北门)",
+                "latitude": 31.2376,
+                "longitude": 121.502,
+                "name": "国金中心",
+                "round_time": "60"
+            }
+        ],
+        [
+            {
+                "address": "上海市徐汇区武康路",
+                "latitude": 31.2104,
+                "longitude": 121.441,
+                "name": "武康路",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市闵行区新天地",
+                "latitude": 31.1938,
+                "longitude": 121.315,
+                "name": "新天地",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市黄浦区田子坊",
+                "latitude": 31.2083,
+                "longitude": 121.469,
+                "name": "田子坊",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市黄浦区豫园",
+                "latitude": 31.2277,
+                "longitude": 121.493,
+                "name": "豫园",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市黄浦区城隍庙",
+                "latitude": 31.2234,
+                "longitude": 121.491,
+                "name": "城隍庙",
+                "round_time": "60"
+            }
+        ],
+        [
+            {
+                "address": "上海市黄浦区上海人民广场",
+                "latitude": 31.2294,
+                "longitude": 121.475,
+                "name": "人民广场",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市虹口区沙泾路10号",
+                "latitude": 31.2546,
+                "longitude": 121.492,
+                "name": "老场坊",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市虹口区甜爱路与甜爱支路交叉口南60米",
+                "latitude": 31.2676,
+                "longitude": 121.484,
+                "name": "甜爱路",
+                "round_time": "20"
+            },
+            {
+                "address": "上海市虹口区四川北路2288号(虹口足球场地铁站6号口步行130米)",
+                "latitude": 31.2718,
+                "longitude": 121.484,
+                "name": "鲁迅公园",
+                "round_time": "60"
+            },
+            {
+                "address": "上海市普陀区莫干山路50号",
+                "latitude": 31.2481,
+                "longitude": 121.449,
+                "name": "M50创意园",
+                "round_time": "60"
+            }
+        ]
+    ]
+}

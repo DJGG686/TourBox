@@ -1,0 +1,2043 @@
+swagger: '2.0'
+info:
+  title: 旅小库微信小程序 后端API接口文档
+  version: 1.0.0
+  description: 旅小库微信小程序 后端API接口文档
+  termsOfService: /tos
+  contact:
+    name: 旅小库
+    url: https://www.lvxiaoku.com.cn
+    email: 1243426834@qq.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+schemes:
+  - http
+  - https
+produces:
+  - application/json
+  - application/x-www-form-urlencoded
+consumes:
+  - application/x-www-form-urlencoded
+tags:
+  - name: user
+    description: 用户操作相关接口
+  - name: routes
+    description: 路线查看相关接口
+  - name: routeEdit
+    description: 路线编辑相关接口
+  - name: post
+    description: 帖子操作相关接口
+  - name: score
+    description: 评分操作相关接口
+paths:
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: 用户注册或者登录
+      description: 用户注册或者登录，登录成功时返回用户登录态和openid
+      operationId: userLogin
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录信息，包括用户名和密码
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                description: 微信临时登录凭证code
+                example: '123456789012'
+      responses:
+        200:
+          description: 登录成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 登录成功提示信息
+              token:
+                type: string
+                description: 用户登录token
+              openid:
+                type: string
+                description: 用户微信openid
+          examples:
+            application/json:
+              msg: login success
+              token: c55beb693aeaea300f7c7344b7cf7ecd
+              openid: oL1BS5KiwSdUMtlNRX4ToxTDb_DM
+        201:
+          description: 登录失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 登录失败，缺少code参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: code'
+              errcode: -2
+        203:
+          description: 登陆失败，code无效，code2Session请求失败
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'code 无效'
+              errcode: 40029
+  /user/avatar:
+    post:
+      tags:
+        - user
+      summary: 上传或更新用户头像
+      description: 上传头像文件和token，数据库进行更新，不能撤销
+      operationId: postAvatar
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录token，32位
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '12345678901212354646815212'
+        - name: avatar
+          in: formData
+          description: 需要更新的头像文件
+          required: true
+          type: file
+      responses:
+        '200':
+          description: 上传头像成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 上传头像成功提示信息
+                example: upload success
+        201:
+          description: 上传头像失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        '202':
+          description: 上传头像失败，缺少token，或者缺少avatar文件
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: code'
+              errcode: -2
+        '203':
+          description: 未找到用户，token无效
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'not exist'
+              errcode: -3
+  /user/info:
+    get:
+      tags:
+        - user
+      summary: 获取用户信息
+      description: 通过token获取用户详细信息
+      operationId: getUserInfo
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录token，32位
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '1234567890123456789012'
+      responses:
+        '200':
+          description: 获取用户信息成功
+          schema:
+            $ref: '#/definitions/user'
+        201:
+          description: 登录失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 登录失败，缺少code参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: code'
+              errcode: -2
+  /user/search/{keyword}:
+    get:
+      tags:
+        - user
+      summary: 搜索用户
+      description: 通过关键字搜索相关用户
+      operationId: getUserInfoBySearch
+      parameters:
+        - name: keyword
+          in: path
+          description: 搜索关键字
+          required: true
+          type: string
+      responses:
+        200:
+          description: 搜索用户成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user-preview'
+        201:
+          description: 搜索用户失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+  /user/info/change:
+    put:
+      tags:
+        - user
+      summary: 修改用户信息
+      description: 通过token修改该用户信息
+      operationId: changeUserInfo
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数，用户登录token为必选项，其他参数为可选项，是需要更改的用户信息
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: 用户登录token
+                example: '1234567890123456789012'
+              nkname:
+                type: string
+                description: 用户昵称
+                example: 旅小库
+              gender:
+                type: string
+                description: 用户性别
+                enum:
+                  - M
+                  - F
+                  - U
+                example: M
+              age:
+                type: integer
+                description: 用户年龄
+                example: 25
+              area:
+                type: string
+                description: 用户所在地区
+                example: 北京市
+              area_code:
+                type: integer
+                description: 用户所在地区编码
+                example: 110000
+              job:
+                type: string
+                description: 用户职业
+                example: 学生
+              school:
+                type: string
+                description: 用户学校
+                example: 北京大学
+              label:
+                type: string
+                description: 用户标签
+                example: 旅游
+              labelcode:
+                type: integer
+                description: 用户标签编码
+                example: 1001
+              signature:
+                type: string
+                description: 用户签名
+                example: 旅小库，一个有趣的旅行社
+      responses:
+        200:
+          description: 修改用户信息成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 修改用户信息成功提示信息
+                example: update data success
+        201:
+          description: 更新失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 更新失败，缺少code参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: code'
+              errcode: -2
+  /user/myroutes:
+    get:
+      tags:
+        - user
+      summary: 获取‘我的路线’
+      description: 通过token，获取该用户路线仓库里的所有路线
+      operationId: getMyRoutes
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: "参数，用户登录token为必须项；order可选项，排序方式；ispublic可选项，表示传回的路线是否是公开路线，1为公开，0为私有，不传默认全部"
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '12345678901234567890123456789012'
+              order:
+                type: string
+                description: 排序方式
+                example: uptime
+                enum:
+                  - uptime
+                  - likenum
+              ispublic:
+                type: integer
+                description: 是否是公开路线，1为公开，0为私有，不传默认全部
+                example: 1
+      responses:
+        200:
+          description: 获取‘我的路线’成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/route-preview'
+        201:
+          description: 获取‘我的路线’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘我的路线’失败，缺少token参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token'
+              errcode: -2
+  /user/mylikes:
+    get:
+      tags:
+        - user
+      summary: 获取‘我点赞的路线’
+      description: 通过token，获取该用户点赞的路线
+      operationId: getMyLikes
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录token，32位
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '12345678901234567890123456789012'
+      responses:
+        200:
+          description: 获取‘我点赞的路线’成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/route-preview'
+        201:
+          description: 获取‘我点赞的路线’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘我点赞的路线’失败，缺少token参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token'
+              errcode: -2
+  /user/myposts:
+    get:
+      tags:
+        - user
+      summary: 获取‘我的帖子’
+      description: 通过token，获取该用户发表的帖子，结构为list，按照发帖时间正序排列
+      operationId: getMyPosts
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录token，32位
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '12345678901234567890123456789012'
+      responses:
+        200:
+          description: 获取‘我的帖子’成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/post-preview'
+        201:
+          description: 获取‘我的帖子’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘我的帖子’失败，缺少token参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token'
+              errcode: -2
+  /user/myjoins:
+    get:
+      tags:
+        - user
+      summary: 获取‘我参加的帖子’
+      description: 通过token，获取该用户参加的帖子，结构为list，按照发帖时间正序排列
+      operationId: getMyJoins
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 用户登录token，32位
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: '12345678901234567890123456789012'
+      responses:
+        200:
+          description: 获取‘我参加的帖子’成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/post-preview'
+        201:
+          description: 获取‘我参加的帖子’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘我参加的帖子’失败，缺少token参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token'
+              errcode: -2
+  /routes/cover:
+    post:
+      tags:
+        - routes
+      summary: 上传或更新路线封面
+      description: 上传封面文件和路线id，数据库进行更新，不能撤销
+      operationId: postCover
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+        - name: cover
+          in: formData
+          description: 需要更新的封面文件
+          required: true
+          type: file
+      responses:
+        200:
+          description: 上传封面成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 上传封面成功提示信息
+                example: upload success
+        201:
+          description: 上传封面失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        '202':
+          description: 上传头像失败，缺少route_id，或者缺少cover文件
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id无效'
+              errcode: -2
+        '203':
+          description: 未找到该路线，route_id无效
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'not exist'
+              errcode: -3
+  /routes/common:
+    get:
+      tags:
+        - routes
+      summary: 获取‘开始探索路线’
+      description: 获取‘开始探索路线’，结构为list，可以按照tag进行筛选，按照order排序
+      operationId: getCommonRoutes
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数，tag必须，order可选项
+          schema:
+            type: object
+            properties:
+              tag:
+                type: integer
+                description: 路线标签,0代表所有标签
+                example: 1
+              order:
+                type: string
+                description: 排序方式
+                example: uptime
+                enum:
+                  - uptime
+                  - likenum
+                  - pingfen
+                  - score
+      responses:
+        200:
+          description: 获取‘开始探索路线’成功，返回一个路线列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/route-preview'
+        201:
+          description: 获取‘开始探索路线’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘开始探索路线’失败，缺少tag参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: tag'
+              errcode: -2
+  /routes/selected:
+    get:
+      tags:
+        - routes
+      summary: 获取‘精选路线’
+      description: 获取‘精选路线’，结构为list，按照tag、month、year筛选
+      operationId: getSelectedRoutes
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数，tag必须，month、year可选项
+          schema:
+            type: object
+            properties:
+              tag:
+                type: integer
+                description: 路线标签,0代表所有标签
+                example: 1
+              month:
+                type: integer
+                description: 月份，可选项，筛选某月份的精品路线，和year参数配合使用
+                example: 4
+              year:
+                type: integer
+                description: 年份，可选项，筛选某年份的精品路线，和month参数配合使用
+                example: 2024
+      responses:
+        200:
+          description: 获取‘精选路线’成功,返回一个精选路线列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/route-preview'
+        201:
+          description: 获取‘精选路线’失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取‘精选路线’失败，缺少tag参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: tag'
+              errcode: -2
+  /routes/info:
+    get:
+      tags:
+        - routes
+      summary: 获取路线详情
+      description: 通过路线id获取路线详情
+      operationId: getRouteInfo
+      parameters:
+        - name: params
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+      responses:
+        200:
+          description: 获取路线详情成功
+          schema:
+            $ref: '#/definitions/route'
+        201:
+          description: 获取路线详情失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 获取路线详情失败，缺少route_id参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /routes/{keyword}:
+    get:
+      tags:
+        - routes
+      summary: 搜索路线
+      description: 通过关键字搜索相关路线(匹配title、descp)
+      operationId: getRouteInfoBySearch
+      parameters:
+        - name: keyword
+          in: path
+          description: 搜索关键字
+          required: true
+          type: string
+      responses:
+        200:
+          description: 搜索路线成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/route-preview'
+        201:
+          description: 搜索路线失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+  /routes/edit/new:
+    post:
+      tags:
+        - routeEdit
+      summary: 新建路线
+      description: 新建路线，必须的参数是token，其他参数是新建路线信息,返回新建路线的id
+      operationId: createNewRoute
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: 用户token，32位
+                example: 1234567890123456789012
+              title:
+                type: string
+                description: 路线标题
+                example: 北京到上海的旅程
+              descp:
+                type: string
+                description: 路线描述
+                example: 北京到上海的旅程，从早上6点出发，途经多个景点，最后到达上海虹桥机场
+              ispub:
+                type: integer
+                description: 是否公开，1为公开，0为私有
+                example: 1
+              daynum:
+                type: integer
+                description: 路线天数
+                example: 3
+              locnum:
+                type: integer
+                description: 路线总地点数
+                example: 5
+              tag:
+                type: integer
+                description: 路线标签
+                example: 1
+      responses:
+        200:
+          description: 新建路线成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 新建路线成功提示信息
+                example: create new route success
+              route_id:
+                type: integer
+                description: 所新建路线的专属id，根据此id进行路线编辑、删除等操作
+                example: 1001
+        201:
+          description: 新建路线失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: 新建路线失败，缺少token参数
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token'
+              errcode: -2
+  /routes/edit/update:
+    put:
+      tags:
+        - routeEdit
+      summary: 更新路线详细信息
+      description: 更新路线详细信息，必须携带路线route_id，其他参数是更新条目
+      operationId: updateRouteInfo
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id,必须要有的参数,其他参数可以选择
+                example: 1001
+              title:
+                type: string
+                description: 路线标题
+                example: 北京到上海的旅程
+              descp:
+                type: string
+                description: 路线描述
+                example: 北京到上海的旅程，从早上6点出发，途经多个景点，最后到达上海虹桥机场
+              ispub:
+                type: integer
+                description: 是否公开，1为公开，0为私有
+                example: 1
+              daynum:
+                type: integer
+                description: 路线天数
+                example: 3
+              locnum:
+                type: integer
+                description: 路线总地点数
+                example: 5
+              tag:
+                type: integer
+                description: 路线标签
+                example: 1
+      responses:
+        200:
+          description: 更新路线成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更新路线成功提示信息
+                example: update route success
+        201:
+          description: 更新路线失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '更新路线失败，缺少参数route_id'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+    delete:
+      summary: 删除此条路线
+      description: 根据路线route_id，删除此条路线
+      operationId: deleteRoute
+      tags:
+        - routeEdit
+      parameters:
+        - name: route_id
+          in: formData
+          description: 路线id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 删除成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更删除路线成功提示信息
+                example: delete route success
+        201:
+          description: 删除失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '删除失败，缺少参数route_id'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /routes/edit/location:
+    post:
+      tags:
+        - routeEdit
+      summary: 新增路线地点
+      description: 新增路线地点，参数为路线id和地点信息
+      operationId: addRouteLocation
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id和data,两个参数必须要有
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                $ref: '#/definitions/location-list'
+      responses:
+        200:
+          description: 新增路线地点成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 新增路线地点成功提示信息
+                example: insert new locations success
+        201:
+          description: 新增路线地点失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '新增路线地点失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+    put:
+      tags:
+        - routeEdit
+      summary: 更新路线地点信息
+      description: 更新路线地点信息，参数为路线id和需要更新的完整地点信息
+      operationId: updateRouteLocation
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                $ref: '#/definitions/location-list'
+      responses:
+        200:
+          description: 更新路线地点信息成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更新路线地点信息成功提示信息
+                example: update locations success
+        201:
+          description: 更新路线地点信息失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '更新路线地点信息失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+    delete:
+      tags:
+        - routeEdit
+      summary: 删除路线地点
+      description: 删除路线地点，参数为路线id和地点id
+      operationId: deleteRouteLocation
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                type: array
+                items:
+                  type: string
+                  description: 地点名字
+                  example: ['南京路', '人民广场']
+      responses:
+        200:
+          description: 删除路线地点成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 删除路线地点成功提示信息
+                example: delete location success
+        201:
+          description: 删除路线地点失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '删除路线地点失败，缺少参数route_id或者参数loc_id'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /routes/edit/way:
+    post:
+      tags:
+        - routeEdit
+      summary: 新增路线规划
+      description: 新增路线规划，参数为路线id和data(表示路线规划信息)
+      operationId: addRouteWay
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id和data,两个参数必须要有
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                description: 路线规划信息
+                $ref: '#/definitions/way-list'
+      responses:
+        200:
+          description: 新增路线规划成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 新增路线规划成功提示信息
+                example: insert new way success
+        201:
+          description: 新增路线规划失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '新增路线规划失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+    put:
+      tags:
+        - routeEdit
+      summary: 更新路线规划信息
+      description: 更新路线规划信息，参数为路线id和需要更新的完整路线规划信息
+      operationId: updateRouteWay
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                description: 路线规划信息
+                $ref: '#/definitions/way-list'
+      responses:
+        200:
+          description: 更新路线规划信息成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更新路线规划信息成功提示信息
+                example: 'update way success'
+        201:
+          description: 更新路线规划信息失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '更新路线规划信息失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /routes/edit/traffic:
+    post:
+      tags:
+        - routeEdit
+      summary: 新增路线交通信息
+      description: 新增路线交通信息，参数为路线id和data(表示交通信息)
+      operationId: addRouteTraffic
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id和data,两个参数必须要有
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                description: 路线交通信息
+                $ref: '#/definitions/traffic-list'
+      responses:
+        200:
+          description: 新增路线交通信息成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 新增路线交通信息成功提示信息
+                example: 'insert new traffic success'
+        201:
+          description: 新增路线交通信息失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '新增路线交通信息失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+    put:
+      tags:
+        - routeEdit
+      summary: 更新路线交通信息
+      description: 更新路线交通信息，参数为路线id和需要更新的完整路线交通信息，更新前的交通信息会被删除
+      operationId: updateRouteTraffic
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 路线id
+          required: true
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              data:
+                description: 路线交通信息
+                $ref: '#/definitions/traffic-list'
+      responses:
+        200:
+          description: 更新路线交通信息成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更新路线交通信息成功提示信息
+                example: 'update traffic success'
+        201:
+          description: 更新路线交通信息失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '更新路线交通信息失败，缺少参数route_id或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /score/route:
+    get:
+      tags:
+        - score
+      summary: 获取路线下的所有评分
+      description: 获取路线下的所有评分，正确返回是一个数组，每个元素是一条评分详细信息
+      operationId: getRoutesScores
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为路线route_id
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+      responses:
+        200:
+          description: 获取成功，返回路线下的所有评分
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/score-detail'
+        201:
+          description: "获取失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "获取失败，缺少参数route_id"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id'
+              errcode: -2
+  /score/users:
+    get:
+      tags:
+        - score
+      summary: 获取某条路线下该用户进行的评分
+      description: 参数为route_id和用户token,正确返回该用户对该路线的评分
+      operationId: getRouteScoreByUser
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为路线route_id和用户token
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+      responses:
+        200:
+          description: "获取成功，返回该用户对该路线的评分"
+          schema:
+            $ref: '#/definitions/score-detail'
+        201:
+          description: "获取失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "获取失败，缺少参数route_id或者token"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id or token'
+              errcode: -2
+    post:
+      tags:
+        - score
+      summary: 给某条路线评分
+      description: "接收某用户对路线的详细打分，更新到数据库，路线中的信息也会修改"
+      operationId: addRouteScore
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为路线route_id和用户token和详细评分lscore,rscore,tscore
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+              lscore:
+                type: number
+                description: 路线中地点列表评分，一位小数
+                example: 4.5
+              rscore:
+                type: number
+                description: 路线规划评分，一位小数
+                example: 4.5
+              tscore:
+                type: number
+                description: 路线交通评分，一位小数
+                example: 4.5
+      responses:
+        200:
+          description: "评分成功"
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 评分成功提示信息
+                example: 'Score submitted success'
+        201:
+          description: "评分失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "评分失败，缺少参数route_id或者token"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id or token'
+              errcode: -2
+    put:
+      tags:
+        - score
+      summary: 更新用户对某条路线评分
+      description: "接收某用户对路线的详细打分，更新到数据库，路线中的信息也会修改"
+      operationId: updateRouteScore
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为路线route_id和用户token和详细评分lscore,rscore,tscore
+          schema:
+            type: object
+            properties:
+              route_id:
+                type: integer
+                description: 路线id
+                example: 1001
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+              lscore:
+                type: number
+                description: 路线中地点列表评分，一位小数
+                example: 4.5
+              rscore:
+                type: number
+                description: 路线规划评分，一位小数
+                example: 4.5
+              tscore:
+                type: number
+                description: 路线交通评分，一位小数
+                example: 4.5
+      responses:
+        200:
+          description: "更新成功"
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 更新成功提示信息
+                example: 'Score updated success'
+        201:
+          description: "更新失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "更新失败，缺少参数route_id或者token"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: route_id or token'
+              errcode: -2
+  /posts/new:
+    post:
+      tags:
+        - post
+      summary: 新建帖子
+      description: 新建帖子，参数为帖子标题、封面、描述、需要人数、token
+      operationId: addPost
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 帖子标题、封面、描述、需要人数、token
+          required: true
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+              title:
+                type: string
+                description: 帖子标题
+                example: 上海三日四人游
+              cover:
+                type: string
+                description: 帖子封面下载url
+                example: /download/img/cover/default.jpeg
+              descp:
+                type: string
+                description: 帖子描述
+                example: 三日四人游，去上海玩，遇见你
+              need:
+                type: integer
+                description: 帖子需要人数
+                example: 4
+      responses:
+        200:
+          description: 新建帖子成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 新建帖子成功提示信息
+                example: 'create new route success'
+              post_id:
+                type: integer
+                description: 新建帖子的id
+                example: 1001
+        201:
+          description: 新建帖子失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '新建帖子失败，缺少参数token或者参数data'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: token or data'
+              errcode: -2
+  /posts/info:
+    get:
+      tags:
+        - post
+      summary: 获取帖子详情
+      description: 获取帖子详情，参数为帖子id
+      operationId: getPostInfo
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为帖子id
+          schema:
+            type: object
+            properties:
+              post_id:
+                type: integer
+                description: 帖子id
+                example: 1001
+      responses:
+        200:
+          description: 获取帖子详情成功
+          schema:
+            $ref: '#/definitions/post'
+        201:
+          description: "获取帖子详情失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "获取帖子详情失败，缺少参数post_id"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: post_id'
+              errcode: -2
+  /posts/list:
+    get:
+      tags:
+        - post
+      summary: 获取帖子列表
+      description: 获取帖子列表，参数为tag标签
+      operationId: getPostList
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: 参数为tag标签,0表示全部帖子
+          schema:
+            type: object
+            properties:
+              tag:
+                type: integer
+                description: 帖子标签,0表示全部帖子
+                example: 0
+      responses:
+        200:
+          description: 获取帖子列表成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/post-preview'
+        201:
+          description: "获取帖子列表失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: "获取帖子列表失败，缺少参数tag"
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: tag'
+              errcode: -2
+  /posts/search/{keyword}:
+    get:
+      tags:
+        - post
+      summary: 搜索帖子
+      description: "根据关键字，搜索与帖子标题和描述或者依附路线标题和描述相关的帖子"
+      operationId: getPostsByKeyword
+      parameters:
+        - name: keyword
+          in: path
+          required: true
+          description: 搜索关键字
+          type: string
+      responses:
+        200:
+          description: 搜索帖子成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/post-preview'
+        201:
+          description: "搜索帖子失败，数据库查询语句错误"
+          schema:
+            $ref: '#/definitions/err'
+  /posts/join:
+    post:
+      tags:
+        - post
+      summary: 加入帖子
+      description: 加入帖子，参数为帖子post_id和token
+      operationId: joinPost
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 帖子id和token,以及用户信息：昵称、微信号、手机号，缺一不可
+          required: true
+          schema:
+            type: object
+            properties:
+              post_id:
+                type: integer
+                description: 帖子id
+                example: 1001
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+              name:
+                type: string
+                description: 用户昵称
+                example: 张三
+              wechat:
+                type: string
+                description: 用户微信号
+                example: zhangsan123456
+              phone:
+                type: string
+                description: 用户手机号
+                example: 13800138000
+      responses:
+        200:
+          description: 加入帖子成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 加入帖子成功提示信息
+                example: 'join post success'
+        201:
+          description: 加入帖子失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '加入帖子失败，缺少参数post_id或者其他参数'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: post_id or data'
+              errcode: -2
+  /posts/quit:
+    post:
+      tags:
+        - post
+      summary: 退出帖子
+      description: 退出帖子，参数为帖子post_id和token
+      operationId: quitPost
+      consumes:
+        - application/json
+      parameters:
+        - name: data
+          in: body
+          description: 帖子id和token
+          required: true
+          schema:
+            type: object
+            properties:
+              post_id:
+                type: integer
+                description: 帖子id
+                example: 1001
+              token:
+                type: string
+                description: 用户token
+                example: c55beb693aeaea300f7c7344b7cf7ecd
+      responses:
+        200:
+          description: 退出帖子成功
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: 退出帖子成功提示信息
+                example: 'quit post success'
+        201:
+          description: 退出帖子失败，数据库查询语句错误
+          schema:
+            $ref: '#/definitions/err'
+        202:
+          description: '退出帖子失败，缺少参数post_id或者token'
+          schema:
+            $ref: '#/definitions/err'
+          examples:
+            application/json:
+              errmsg: 'Missing parameters: post_id'
+              errcode: -2
+
+definitions:
+  user:
+    type: object
+    properties:
+      token:
+        type: string
+        description: 用户登录token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      openid:
+        type: string
+        description: 用户微信openid
+        example: oL1BS5KiwSdUMtlNRX4ToxTDb_DM
+      session_key:
+        type: string
+        description: 用户微信session_key
+        example: URzmMFB9CanRbvBWVRiTUQ==
+      nkname:
+        type: string
+        description: 用户昵称
+        example: 张三
+      avatar:
+        type: string
+        description: 用户头像下载url
+        example: /download/img/avatar/default.jpeg
+      gender:
+        type: string
+        description: 用户性别
+        enum:
+          - M
+          - F
+          - U
+        example: M
+      age:
+        type: integer
+        description: 用户年龄
+        example: 18
+      area:
+        type: string
+        description: 用户所在地区
+        example: 上海市普陀区
+      area_code:
+        type: integer
+        description: 用户所在地区编码
+        example: 1001
+      job:
+        type: string
+        description: 用户职业
+        example: 学生
+      school:
+        type: string
+        description: 用户学校
+        example: 同济大学
+      label:
+        type: string
+        description: 用户标签
+        example: 特种兵
+      labelcode:
+        type: integer
+        description: 用户标签编码
+        example: 1001
+      signature:
+        type: string
+        description: 用户签名
+        example: 个人简介
+  err:
+    type: object
+    properties:
+      errmsg:
+        type: string
+        description: 错误信息
+        example: 'Database query failed'
+      errcode:
+        type: integer
+        description: 错误码
+        example: -1
+  user-preview:
+    type: object
+    properties:
+      token:
+        type: string
+        description: 用户登录token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      nkname:
+        type: string
+        description: 用户昵称
+        example: 张三
+      avatar:
+        type: string
+        description: 用户头像下载url
+        example: /download/img/avatar/default.jpeg
+      signature:
+        type: string
+        description: 用户签名
+        example: 个人简介
+  route-preview:
+    type: object
+    properties:
+      route_id:
+        type: integer
+        description: 路线id
+        example: 1001
+      title:
+        type: string
+        description: 路线标题
+        example: 上海三日游
+      token:
+        type: string
+        description: 路线拥有者token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      avatar:
+        type: string
+        description: 路线作者头像下载url
+        example: /download/img/avatar/default.jpeg
+      cover:
+        type: string
+        description: 路线封面下载url
+        example: /download/img/cover/default.jpeg
+      descp:
+        type: string
+        description: 路线描述
+        example: 三日游，去上海玩，遇见你
+      daynum:
+        type: integer
+        description: 路线天数
+        example: 3
+      locnum:
+        type: integer
+        description: 路线总地点数
+        example: 10
+      likenum:
+        type: integer
+        description: 路线点赞数
+        example: 100
+      fork:
+        type: integer
+        description: 路线被fork数
+        example: 10
+      score:
+        type: number
+        description: 路线平均评分，一位小数
+        example: 4.5
+      pingfen:
+        type: number
+        description: 路线得分
+        example: 563.3
+  route:
+    type: object
+    properties:
+      route_id:
+        type: integer
+        description: 路线id
+        example: 1001
+      token:
+        type: string
+        description: 路线拥有者token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      nkname:
+        type: string
+        description: 路线拥有者昵称
+        example: 张三
+      avatar:
+        type: string
+        description: 路线作者头像下载url
+        example: /download/img/avatar/default.jpeg
+      title:
+        type: string
+        description: 路线标题
+        example: 上海三日游
+      cover:
+        type: string
+        description: 路线封面下载url
+        example: /download/img/cover/default.jpeg
+      descp:
+        type: string
+        description: 路线描述
+        example: 三日游，去上海玩，遇见你
+      ispub:
+        type: integer
+        description: 是否公开，1为公开，0为私有
+        example: 1
+      author:
+        type: string
+        description: 路线作者token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      daynum:
+        type: integer
+        description: 路线天数
+        example: 3
+      locnum:
+        type: integer
+        description: 路线总地点数
+        example: 10
+      likenum:
+        type: integer
+        description: 路线点赞数
+        example: 100
+      fork:
+        type: integer
+        description: 路线被fork数
+        example: 10
+      lscore:
+        type: number
+        description: 路线中地点列表评分，一位小数
+        example: 4.5
+      rscore:
+        type: number
+        description: 路线规划评分，一位小数
+        example: 4.5
+      tscore:
+        type: number
+        description: 路线交通评分，一位小数
+        example: 4.5
+      uptime:
+        type: string
+        description: 路线创建时间
+        example: '2024-03-06 00:00:00'
+      tag:
+        type: integer
+        description: 路线标签
+        example: 1
+      location:
+        $ref: '#/definitions/location-list'
+      way:
+        $ref: '#/definitions/way-list'
+      traffic:
+        $ref: '#/definitions/traffic-list'
+  location:
+    type: object
+    properties:
+      name:
+        type: string
+        description: 地点名称
+        example: 人民广场
+      "address":
+        type: string
+        description: 地点地址
+        example: "上海市黄浦区上海人民广场"
+      "latitude":
+        type: number
+        description: 地点纬度
+        example: 31.229381
+      "longitude":
+        type: number
+        description: 地点经度
+        example: 121.474539
+  location-list:
+    type: array
+    description: 路线地点列表,元素为每一天的地点列表
+    items:
+      type: array
+      description: 每一天的地点列表，元素为具体每个地点的信息
+      items:
+        $ref: '#/definitions/location'
+  way-list:
+    type: array
+    description: 路线规划,元素为每一天的路线规划list
+    items:
+      type: array
+      description: 每一天的路线规划list，元素为具体每个路线途径地点信息
+      items:
+        $ref: '#/definitions/location'
+      example:
+        - name: 人民广场
+          address: 上海市黄浦区上海人民广场
+          latitude: 31.2294
+          longitude: 121.4755
+          round_time: 60
+        - name: 老场坊
+          address: 上海市浦东新区世纪大道100号
+          latitude: 31.2546
+          longitude: 121.492
+          round_time: 60
+        - name: 甜爱路
+          address: 上海市虹口区甜爱路与甜爱支路交叉口南60米
+          latitude: 31.2676
+          longitude: 121.484
+          round_time: 60
+  traffic:
+    type: object
+    properties:
+      approach:
+        type: integer
+        description: 交通方式，0为驾车，1为步行，2为地铁，3为公交
+        example: 2
+      line:
+        type: string
+        description: 交通线路描述
+        example: 地铁8号线
+      start:
+        type: string
+        description: 交通起点
+        example: 人民广场站
+      ed:
+        type: string
+        description: 交通终点
+        example: 曲阜路站
+      tme:
+        type: integer
+        description: 交通时长
+        example: 30
+  traffic-list:
+    type: array
+    description: 路线交通,元素为每一天的路线交通信息
+    items:
+      type: array
+      description: 每一天的路线交通信息，元素为具体每一段路线交通信息
+      items:
+        type: array
+        description: 具体某一段路线交通信息，元素为交通规划
+        items:
+          $ref: '#/definitions/traffic'
+  score-detail:
+    type: object
+    properties:
+      token:
+        type: string
+        description: 用户token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      avatar:
+        type: string
+        description: 用户头像下载url
+        example: /download/img/avatar/default.jpeg
+      nkname:
+        type: string
+        description: 用户昵称
+        example: 张三
+      uptime:
+        type: string
+        description: 评分时间
+        example: '2024-03-06 00:00:00'
+      lscore:
+        type: number
+        description: 路线中地点列表评分，一位小数
+        example: 4.5
+      rscore:
+        type: number
+        description: 路线规划评分，一位小数
+        example: 4.5
+      tscore:
+        type: number
+        description: 路线交通评分，一位小数
+        example: 4.5
+  post:
+    type: object
+    properties:
+      post_id:
+        type: integer
+        description: 帖子id
+        example: 1001
+      title:
+        type: string
+        description: 帖子标题
+        example: 上海三日四人游
+      need:
+        type: integer
+        description: 帖子需要人数
+        example: 4
+      num:
+        type: integer
+        description: 帖子当前人数
+        example: 3
+      qcode:
+        type: string
+        description: 帖子二维码
+        example: /download/img/qrcode/default.png
+      descp:
+        type: string
+        description: 帖子描述
+        example: 三日四人游，去上海玩，遇见你
+      uptime:
+        type: string
+        description: 帖子创建时间
+        example: '2024-03-06 00:00:00'
+      endtime:
+        type: string
+        description: 帖子结束时间
+        example: '2024-04-06 00:00:00'
+      leader:
+        $ref: '#/definitions/user-preview'
+      members:
+        type: array
+        description: 帖子成员列表
+        items:
+          $ref: '#/definitions/member'
+      my-info:
+        $ref: '#/definitions/member'
+      route:
+        $ref: '#/definitions/route-preview'
+  post-preview:
+    type: object
+    properties:
+      post_id:
+        type: integer
+        description: 帖子id
+        example: 1001
+      title:
+        type: string
+        description: 帖子标题
+        example: 上海三日四人游
+      cover:
+        type: string
+        description: 帖子封面下载url
+        example: /download/img/cover/default.jpeg
+      descp:
+        type: string
+        description: 帖子描述
+        example: 三日四人游，去上海玩，遇见你
+      need:
+        type: integer
+        description: 帖子需要人数
+        example: 4
+      num:
+        type: integer
+        description: 帖子当前人数
+        example: 3
+      endtime:
+        type: string
+        description: 帖子结束时间
+        example: '2024-04-06 00:00:00'
+  member:
+    type: object
+    properties:
+      token:
+        type: string
+        description: 用户token
+        example: c55beb693aeaea300f7c7344b7cf7ecd
+      avatar:
+        type: string
+        description: 用户头像下载url
+        example: /download/img/avatar/default.jpeg
+      name:
+        type: string
+        description: 用户昵称
+        example: 张三
+      signature:
+        type: string
+        description: 用户签名
+        example: 个人简介
+      wechat:
+        type: string
+        description: 用户微信号
+        example: zhangsan123
+      phone:
+        type: string
+        description: 用户手机号
+        example: 13812345678
+
+
